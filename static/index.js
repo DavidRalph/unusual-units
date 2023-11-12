@@ -22,8 +22,8 @@ const unitsLength = [
   { name: "Nautical Miles", si: 1852, penalty: 1 },
   { name: "Marathons", si: 42195, penalty: 0 },
   // Currency
-  { name: "Pennies", si: 0.0203, penalty: 0 },
   { name: "Nickels", si: 0.01905, penalty: 0 },
+  { name: "Pennies", si: 0.0203, penalty: 0 },
   { name: "2p Coins", si: 0.0259, penalty: 0 },
   { name: "5p Coins", si: 0.018, penalty: 0 },
   { name: "10p Coins", si: 0.0245, penalty: 0 },
