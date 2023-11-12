@@ -1,7 +1,7 @@
 const unitsLength = [
   // Metric
-  { name: "Millimeters", si: 0.001, penalty: 1 },
-  { name: "Centimeters", si: 0.01, penalty: 1 },
+  { name: "Millimeters", si: 0.001, penalty: 2 },
+  { name: "Centimeters", si: 0.01, penalty: 2 },
   { name: "Meters", si: 1, penalty: 2 },
   { name: "Kilometers", si: 1000, penalty: 2 },
   // Imperial
@@ -9,7 +9,6 @@ const unitsLength = [
   { name: "Feet", si: 0.3048, penalty: 1 },
   { name: "Hands", si: 0.1016, penalty: 0 },
   { name: "Links", si: 0.201168, penalty: 0 },
-  { name: "Dimes", si: 0.01791, penalty: 0 },
   { name: "Nails", si: 0.05715, penalty: 0 },
   { name: "Fingers", si: 0.1143, penalty: 0 },
   { name: "Cubits", si: 0.4572, penalty: 0 },
@@ -22,7 +21,6 @@ const unitsLength = [
   { name: "Nautical Miles", si: 1852, penalty: 1 },
   { name: "Marathons", si: 42195, penalty: 0 },
   // Currency
-  { name: "Nickels", si: 0.01905, penalty: 0 },
   { name: "Pennies", si: 0.0203, penalty: 0 },
   { name: "2p Coins", si: 0.0259, penalty: 0 },
   { name: "5p Coins", si: 0.018, penalty: 0 },
@@ -37,6 +35,8 @@ const unitsLength = [
   { name: "£20 Notes", si: 0.139, penalty: 0 },
   { name: "£100 Notes", si: 0.167, penalty: 0 },
   { name: "£200 Notes", si: 0.178, penalty: 0 },
+  { name: "Nickels", si: 0.01905, penalty: 0 },
+  { name: "Dimes", si: 0.01791, penalty: 0 },
   { name: "Dollar Bills", si: 0.156, penalty: 0 },
   // Objects & Animals
   { name: "Human Hairs", si: 0.0001, penalty: 0 },
@@ -166,6 +166,9 @@ function bestUnit(si, units) {
 
       // Prefer visually smaller numbers (less digits)
       let weight = numberOfDigits(count);
+
+      // Prefer units that are more interesting
+      weight += unit.penalty;
 
       // Strongly prefer units smaller than the input
       if (count < 1) {
