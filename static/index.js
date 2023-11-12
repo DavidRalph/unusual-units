@@ -82,7 +82,7 @@ const unitsLength = [
   { name: "Nile Rivers", si: 6650, penalty: 0 },
   { name: "Mount Everests", si: 8848, penalty: 0 },
   { name: "Pacific Ocean Depth", si: 10911, penalty: 0 },
-  { name: "Mariana Trench Depths", si: 11034, penalty: 0 },
+  { name: "Mariana Trench Depths", si: 10916, penalty: 0 },
   { name: "Great Walls of China", si: 21196, penalty: 0 },
   // Space
   { name: "Pluto Diameters", si: 2370000, penalty: 0 },
@@ -137,6 +137,9 @@ function setupConverter(input, select, output, units) {
     conversion[conversion.length - 1].count =
       Math.round(conversion[conversion.length - 1].count * 10) / 10;
     const parts = conversion.map((part) => `${part.count} ${part.unit.name}`);
+    if (parts.length > 1) {
+      parts[parts.length - 1] = "and " + parts[parts.length - 1];
+    }
     outputElement.innerHTML = "Is equal to " + parts.join(", ");
   };
 
