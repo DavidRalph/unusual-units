@@ -1,3 +1,6 @@
+// Maximum number of different units to use in the output
+const MAX_UNITS = 2;
+
 const unitsLength = [
   // Metric
   { name: "Millimeters", si: 0.001, penalty: 2 },
@@ -131,6 +134,8 @@ function setupConverter(input, select, output, units) {
   // Handle input
   const update = () => {
     const conversion = convert(inputElement.value, selectElement.value, units);
+    conversion[conversion.length - 1].count =
+      Math.round(conversion[conversion.length - 1].count * 10) / 10;
     const parts = conversion.map((part) => `${part.count} ${part.unit.name}`);
     outputElement.innerHTML = "Is equal to " + parts.join(", ");
   };
@@ -146,7 +151,10 @@ function convert(inNumber, inUnitName, units) {
   let allowedUnits = units.filter((unit) => unit !== inUnit);
   let remainder = inUnit.si * inNumber;
   while (remainder > 0.0000000001) {
-    const { count, unit } = bestUnit(remainder, allowedUnits);
+    let { count, unit } = bestUnit(remainder, allowedUnits);
+    if (count > 1 && output.length < MAX_UNITS - 1) {
+      count = Math.floor(count);
+    }
     remainder = remainder - count * unit.si;
     console.log(count, unit, "remainder", remainder);
     output.push({ count, unit });
@@ -162,13 +170,16 @@ function bestUnit(si, units) {
     .map((unit) => {
       const count = si / unit.si;
 
-      // Prefer visually smaller numbers (less digits)
-      let weight = numberOfDigits(count);
+      // // Prefer visually smaller numbers (less digits)
+      // let weight = numberOfDigits(Math.floor(count));
+
+      // Prefer the closest unit
+      let weight = Math.abs(1 - count);
 
       // Prefer units that are more interesting
       weight += unit.penalty;
 
-      // Strongly prefer units smaller than the input
+      // Prefer units smaller than the input
       if (count < 1) {
         weight += 10;
       }
@@ -178,11 +189,11 @@ function bestUnit(si, units) {
     .sort((a, b) => a.weight - b.weight)[0];
 }
 
-function numberOfDigits(number) {
-  // Avoid scientific notation
-  const str = Number(number)
-    .toFixed(100)
-    .replace(/\.?0+$/, "");
-  // Don't penalise decimals
-  return str.replace(".", "").length;
-}
+// function numberOfDigits(number) {
+//   // Avoid scientific notation
+//   const str = Number(number)
+//     .toFixed(100)
+//     .replace(/\.?0+$/, "");
+//   // Don't penalise decimals
+//   return str.replace(".", "").length;
+// }
