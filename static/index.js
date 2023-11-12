@@ -3,25 +3,25 @@ const MAX_UNITS = 2;
 
 const unitsLength = [
   // Metric
-  { name: "Millimeters", si: 0.001, penalty: 2 },
-  { name: "Centimeters", si: 0.01, penalty: 2 },
-  { name: "Meters", si: 1, penalty: 2 },
-  { name: "Kilometers", si: 1000, penalty: 2 },
+  { name: "Millimeters", si: 0.001, penalty: 3 },
+  { name: "Centimeters", si: 0.01, penalty: 3 },
+  { name: "Meters", si: 1, penalty: 3 },
+  { name: "Kilometers", si: 1000, penalty: 3 },
   // Imperial
-  { name: "Inches", si: 0.0254, penalty: 1 },
-  { name: "Feet", si: 0.3048, penalty: 1 },
-  { name: "Hands", si: 0.1016, penalty: 0 },
-  { name: "Links", si: 0.201168, penalty: 0 },
-  { name: "Nails", si: 0.05715, penalty: 0 },
-  { name: "Fingers", si: 0.1143, penalty: 0 },
-  { name: "Cubits", si: 0.4572, penalty: 0 },
-  { name: "Yards", si: 0.9144, penalty: 1 },
-  { name: "Fathoms", si: 1.8288, penalty: 0 },
-  { name: "Rods", si: 5.0292, penalty: 0 },
-  { name: "Chains", si: 20.1168, penalty: 0 },
-  { name: "Furlongs", si: 201.168, penalty: 0 },
-  { name: "Miles", si: 1609.344, penalty: 2 },
-  { name: "Nautical Miles", si: 1852, penalty: 1 },
+  { name: "Inches", si: 0.0254, penalty: 2 },
+  { name: "Feet", si: 0.3048, penalty: 2 },
+  { name: "Hands", si: 0.1016, penalty: 1 },
+  { name: "Links", si: 0.201168, penalty: 1 },
+  { name: "Nails", si: 0.05715, penalty: 1 },
+  { name: "Fingers", si: 0.1143, penalty: 1 },
+  { name: "Cubits", si: 0.4572, penalty: 1 },
+  { name: "Yards", si: 0.9144, penalty: 2 },
+  { name: "Fathoms", si: 1.8288, penalty: 1 },
+  { name: "Rods", si: 5.0292, penalty: 1 },
+  { name: "Chains", si: 20.1168, penalty: 1 },
+  { name: "Furlongs", si: 201.168, penalty: 1 },
+  { name: "Miles", si: 1609.344, penalty: 3 },
+  { name: "Nautical Miles", si: 1852, penalty: 2 },
   { name: "Marathons", si: 42195, penalty: 0 },
   // Currency
   { name: "Pennies", si: 0.0203, penalty: 0 },
@@ -134,8 +134,10 @@ function setupConverter(input, select, output, units) {
   // Handle input
   const update = () => {
     const conversion = convert(inputElement.value, selectElement.value, units);
-    conversion[conversion.length - 1].count =
-      Math.round(conversion[conversion.length - 1].count * 10) / 10;
+    const final = conversion[conversion.length - 1];
+    if (final.count > 1) {
+      final.count = Math.round(final.count * 10) / 10;
+    }
     const parts = conversion.map((part) => `${part.count} ${part.unit.name}`);
     if (parts.length > 1) {
       parts[parts.length - 1] = "and " + parts[parts.length - 1];
@@ -173,11 +175,11 @@ function bestUnit(si, units) {
     .map((unit) => {
       const count = si / unit.si;
 
-      // // Prefer visually smaller numbers (less digits)
-      // let weight = numberOfDigits(Math.floor(count));
+      // Prefer visually smaller numbers (less digits)
+      let weight = numberOfDigits(Math.floor(count));
 
-      // Prefer the closest unit
-      let weight = Math.abs(1 - count);
+      // // Prefer the closest unit
+      // let weight = Math.abs(1 - count);
 
       // Prefer units that are more interesting
       weight += unit.penalty;
@@ -192,11 +194,11 @@ function bestUnit(si, units) {
     .sort((a, b) => a.weight - b.weight)[0];
 }
 
-// function numberOfDigits(number) {
-//   // Avoid scientific notation
-//   const str = Number(number)
-//     .toFixed(100)
-//     .replace(/\.?0+$/, "");
-//   // Don't penalise decimals
-//   return str.replace(".", "").length;
-// }
+function numberOfDigits(number) {
+  // Avoid scientific notation
+  const str = Number(number)
+    .toFixed(100)
+    .replace(/\.?0+$/, "");
+  // Don't penalise decimals
+  return str.replace(".", "").length;
+}
